@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Révision – Notions de base sur les signaux</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<style>
+:root{--bg:#f3f5f8;--card:#fff;--ink:#1f2a37;--mute:#5b6878;--line:#d9e0e8;--accent:#3f6c9a;--soft:#e4edf6;--warn:#b4531d;--warnbg:#fbeee4;--ok:#2d7a52;--okbg:#e5f4ec;--sig:#c2410c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11171f;--card:#1a232e;--ink:#e6ebf1;--mute:#9aa8b8;--line:#2d3947;--accent:#7fb0e0;--soft:#223347;--warn:#f0a572;--warnbg:#3a2a1f;--ok:#7fd1a2;--okbg:#1e3329;--sig:#ff9b5e}}
+:root[data-theme="dark"]{--bg:#11171f;--card:#1a232e;--ink:#e6ebf1;--mute:#9aa8b8;--line:#2d3947;--accent:#7fb0e0;--soft:#223347;--warn:#f0a572;--warnbg:#3a2a1f;--ok:#7fd1a2;--okbg:#1e3329;--sig:#ff9b5e}
+html{scroll-behavior:smooth;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "IBM Plex Sans",system-ui,sans-serif}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;align-items:center;padding:8px 12px;overflow-x:auto;white-space:nowrap}
+nav a{color:var(--mute);text-decoration:none;padding:6px 11px;border-radius:8px;font-size:14px;font-weight:500}
+nav a:hover,nav a:focus-visible{background:var(--soft);color:var(--accent);outline:none}
+nav button{margin-left:auto;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+header,main{max-width:940px;margin:0 auto;padding:0 18px}
+header{padding-top:40px}
+h1,h2{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;line-height:1.25}
+h1{font-size:clamp(28px,5vw,40px);margin:0 0 10px}
+h2{font-size:26px;margin:56px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+h3{font-size:18px;margin:28px 0 8px;color:var(--accent)}
+.lead{color:var(--mute);max-width:64ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.grid .card{margin:0}
+.call{border-left:4px solid var(--accent);background:var(--soft);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.call.w{border-color:var(--warn);background:var(--warnbg)}
+.call.k{border-color:var(--ok);background:var(--okbg)}
+.call b:first-child{display:block;margin-bottom:2px}
+.f{font:500 17px/1.7 "IBM Plex Serif",Georgia,serif;text-align:center;background:var(--soft);border-radius:10px;padding:10px;margin:10px 0;overflow-x:auto}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+.fig{margin:0;text-align:center}
+.fig svg{width:100%;height:auto;max-width:320px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.fig figcaption{font-size:13.5px;color:var(--mute);margin-top:5px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.pair .fig svg{max-width:100%}.ex b:first-child{color:var(--accent)}
+.sig{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.sig .card{margin:0;display:flex;flex-direction:column;gap:6px}
+.sig h3{margin:0}
+code{background:var(--soft);padding:1px 6px;border-radius:5px;font-size:.92em}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:10px 0;padding:10px 16px}
+summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 2px;color:var(--ok)}
+footer{max-width:940px;margin:50px auto;padding:0 18px;color:var(--mute);font-size:14px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav>
+<a href="#gen">Généralités</a><a href="#class">Classification</a><a href="#ener">Énergie &amp; puissance</a><a href="#ops">Opérations</a><a href="#usuels">Signaux usuels</a><a href="#deriv">Dérivation graphique</a><a href="#recap">Récap</a><a href="#quiz">Quiz</a>
+<button id="th" type="button">Thème</button>
+</nav>
+
+<header>
+<h1>Chapitre I : Notions de base sur les signaux</h1>
+<p class="lead">Fiche de révision du cours de N. Soudani : définitions, classifications, opérations et les dix signaux usuels, avec un schéma pour chaque notion. Les courbes sont tracées à partir des formules du cours.</p>
+</header>
+
+<main>
+<h2 id="gen">1. Généralités</h2>
+<div class="grid">
+<div class="card"><h3>Signal</h3>Fonction du temps représentant une <b>grandeur physique</b> qui porte de l'information. C'est la <b>représentation physique</b> de l'information.</div>
+<div class="card"><h3>Information</h3>Le <b>message</b> à transmettre de l'émetteur (la <i>source</i>) au récepteur (le <i>destinataire</i>).</div>
+<div class="card"><h3>Bruit</h3>Tout phénomène perturbateur qui gêne la perception ou l'interprétation du signal. Il est en général <b>de même nature</b> que le signal et s'y <b>superpose</b>.</div>
+</div>
+
+<div class="card fig">
+<svg viewBox="0 0 560 150" style="max-width:560px" role="img" aria-label="Chaîne de transmission">
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9z" fill="var(--accent)"/></marker></defs>
+<rect x="15" y="40" width="110" height="55" rx="8" fill="var(--soft)" stroke="var(--accent)"/><text x="70" y="64" text-anchor="middle" fill="var(--ink)" font-size="15" font-weight="600">Source</text><text x="70" y="84" text-anchor="middle" fill="var(--mute)" font-size="12">émetteur</text>
+<rect x="435" y="40" width="110" height="55" rx="8" fill="var(--soft)" stroke="var(--accent)"/><text x="490" y="64" text-anchor="middle" fill="var(--ink)" font-size="15" font-weight="600">Destinataire</text><text x="490" y="84" text-anchor="middle" fill="var(--mute)" font-size="12">récepteur</text>
+<path d="M125 68 C190 68 190 68 220 68 L430 68" stroke="var(--accent)" stroke-width="2.5" fill="none" marker-end="url(#ar)"/>
+<text x="280" y="55" text-anchor="middle" fill="var(--ink)" font-size="14" font-weight="600">Signal (porte l'information)</text>
+<path d="M280 20 L280 62" stroke="var(--warn)" stroke-width="2" stroke-dasharray="4 3" fill="none" marker-end="url(#ar)"/>
+<text x="280" y="14" text-anchor="middle" fill="var(--warn)" font-size="13" font-weight="600">Bruit (se superpose)</text>
+<text x="280" y="120" text-anchor="middle" fill="var(--mute)" font-size="13">Le rapport signal à bruit mesure le degré de contamination du signal par le bruit</text>
+</svg>
+<figcaption>Chaîne de transmission d'une information.</figcaption></div>
+
+<div class="call k"><b>À retenir</b>Rapport signal à bruit : plus il est élevé, moins le signal est contaminé par le bruit. (En pratique il s'exprime souvent en dB, mais ce n'est pas dans ton cours.)</div>
+
+<h2 id="class">2. Classification des signaux</h2>
+<div class="tw"><table>
+<tr><th>Critère</th><th>Catégories</th><th>Définition</th></tr>
+<tr><td>Réel / complexe</td><td>réel · complexe</td><td>Valeurs dans ℝ → réel. Valeurs dans ℂ → complexe.</td></tr>
+<tr><td>Continu / discret</td><td>analogique · quantifié · échantillonné · numérique</td><td>On regarde le temps (continu ou discret) et l'amplitude (continue ou discrète).</td></tr>
+<tr><td>Déterministe / aléatoire</td><td>prévisible · non prévisible</td><td>Déterministe : on peut prévoir sa valeur. Aléatoire : non.</td></tr>
+<tr><td>Périodique / apériodique</td><td>x(t+T) = x(t)</td><td>T est la période. Sinon, le signal est apériodique.</td></tr>
+<tr><td>Énergétique</td><td>énergie finie · puissance finie non nulle</td><td>Voir la section suivante.</td></tr>
+</table></div>
+
+<h3>Classification morphologique (temps × amplitude)</h3>
+<div class="sig" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+<figure class="fig"><div id="m1"></div><figcaption><b>Analogique</b><br>temps continu, amplitude continue</figcaption></figure>
+<figure class="fig"><div id="m2"></div><figcaption><b>Quantifié</b><br>temps continu, amplitude discrète</figcaption></figure>
+<figure class="fig"><div id="m3"></div><figcaption><b>Échantillonné</b><br>temps discret, amplitude continue</figcaption></figure>
+<figure class="fig"><div id="m4"></div><figcaption><b>Numérique</b><br>temps discret, amplitude discrète</figcaption></figure>
+</div>
+<div class="call"><b>Astuce</b>Échantillonner = discrétiser le <b>temps</b>. Quantifier = discrétiser l'<b>amplitude</b>. Les deux ensemble donnent un signal numérique.</div>
+
+<h2 id="ener">3. Énergie et puissance</h2>
+<div class="grid">
+<div class="card"><h3>Énergie</h3><div class="f">E<sub>x</sub> = ∫<sub>−∞</sub><sup>+∞</sup> |x(t)|² dt</div>Énergie finie si l'intégrale existe et est finie. Les signaux <b>limités dans le temps</b> sont à énergie finie.</div>
+<div class="card"><h3>Puissance moyenne</h3><div class="f">P<sub>x</sub> = lim<sub>T→∞</sub> (1/T) ∫<sub>−T/2</sub><sup>T/2</sup> |x(t)|² dt</div>Puissance finie non nulle si la limite existe, finie et non nulle. Les signaux <b>périodiques</b> en font partie.</div>
+</div>
+<div class="tw"><table>
+<tr><th>Si le signal est…</th><th>Énergie</th><th>Puissance moyenne</th></tr>
+<tr><td>à énergie finie</td><td>finie</td><td>nulle</td></tr>
+<tr><td>à puissance moyenne finie non nulle</td><td>infinie</td><td>finie, non nulle</td></tr>
+</table></div>
+
+<h2 id="ops">4. Opérations sur les signaux</h2>
+<p>Signal de départ : x(t), en orange pâle sur chaque schéma. Le signal transformé est en trait plein.</p>
+<div class="sig" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+<figure class="fig"><div id="o1"></div><figcaption><b>Décalage horizontal</b> : x(t − t₀)<br>x(t) est déplacé vers la droite si t₀ &gt; 0</figcaption></figure>
+<figure class="fig"><div id="o2"></div><figcaption><b>Décalage vertical</b> : x(t) + a<br>toute la courbe monte de a</figcaption></figure>
+<figure class="fig"><div id="o3"></div><figcaption><b>Transposition</b> : x(−t)<br>symétrie par rapport à l'axe vertical</figcaption></figure>
+<figure class="fig"><div id="o4"></div><figcaption><b>Changement d'échelle</b> : x(at)<br>ici a = 2 : le signal est comprimé</figcaption></figure>
+</div>
+<div class="call w"><b>Piège</b>x(t − t₀) décale vers la <b>droite</b> pour t₀ &gt; 0 (on retarde le signal), même si le signe est « moins ».</div>
+
+<h2 id="usuels">5. Les dix signaux usuels</h2>
+<div class="sig">
+<div class="card"><h3>1. Porte (rectangulaire)</h3><div id="s1"></div>
+<div class="f">αΠ<sub>θ</sub>(t − t₀) = α si |t − t₀| &lt; θ/2, 0 ailleurs</div>Amplitude α, ouverture θ, centrée en t₀.</div>
+
+<div class="card"><h3>2. Impulsion de Dirac</h3><div id="s2"></div>
+<div class="f">αδ(t − t₀)</div>Dessinée par une <b>flèche</b>. Propriétés :
+<ul><li>∫ δ(t) dt = 1</li><li>x(t)δ(t − t₀) = x(t₀)δ(t − t₀)</li><li>δ(at) = (1/|a|) δ(t)</li><li>δ(t) est paire</li></ul></div>
+
+<div class="card"><h3>3. Peigne de Dirac</h3><div id="s3"></div>
+<div class="f">p(t) = Σ<sub>n=−∞</sub><sup>+∞</sup> δ(t − nT)</div>Signal <b>périodique</b> de période T : un Dirac toutes les nT.</div>
+
+<div class="card"><h3>4. Échelon</h3><div id="s4"></div>
+<div class="f">αu(t − t₀) = α si t &gt; t₀, 0 si t &lt; t₀</div>Propriétés : u²(t) = u(t) · ∫<sub>−∞</sub><sup>t</sup> δ(τ)dτ = u(t) · du/dt = δ(t)</div>
+
+<div class="card"><h3>5. Signe de t</h3><div id="s5"></div>
+<div class="f">Sgn(t) = +1 si t &gt; 0, −1 si t &lt; 0</div>Propriétés : 1 + Sgn(t) = 2u(t) · dSgn/dt = 2δ(t)</div>
+
+<div class="card"><h3>6. Rampe</h3><div id="s6"></div>
+<div class="f">r(t) = t si t ≥ 0, 0 si t &lt; 0</div>Propriétés : r(t) = t·u(t) · dr/dt = u(t)</div>
+
+<div class="card"><h3>7. Triangle</h3><div id="s7"></div>
+<div class="f">αΛ(t − t₀) = α(1 − |t − t₀|/θ) si |t − t₀| ≤ θ</div>Sommet α, largeur 2θ, centré en t₀ (base de t₀ − θ à t₀ + θ).</div>
+
+<div class="card"><h3>8. Exponentiel</h3><div id="s8"></div>
+<div class="f">x(t) = C·e<sup>at</sup>, C et a réels</div><b>a &gt; 0</b> : croissance (orange). <b>a &lt; 0</b> : décroissance (bleu). Dans les deux cas x(0) = C.</div>
+
+<div class="card"><h3>9. Sinusoïdal</h3><div id="s9"></div>
+<div class="f">x(t) = A cos(ω₀t + φ)</div>Période T₀ = 2π/ω₀. Valeur en t = 0 : A cos φ. Amplitude A.</div>
+
+<div class="card"><h3>10. Sinus cardinal</h3><div id="s10"></div>
+<div class="f">sinc(t) = sin(2πat) / (2πat), a ≠ 0</div>Pic de 1 en t = 0, oscillations qui s'atténuent. S'annule en t = k/(2a), k entier non nul. Courbe tracée avec a = 1.</div>
+</div>
+
+<div class="call w"><b>Remarque sur le Dirac</b>Le cours écrit δ(t) = 1 en t = 0 : c'est une simplification. Rigoureusement, le Dirac est une « distribution » d'amplitude infinie et d'aire 1. La hauteur α de la flèche représente son <b>poids</b> (son aire).</div>
+
+<h3>Exercices du cours : tracés à savoir faire</h3>
+<div class="grid">
+<div class="card"><b>x(t) = αu(t − t₀)</b><br>Saut de 0 à α en t = t₀ (voir échelon, n°4).</div>
+<div class="card"><b>x(t) = αΛ(t − t₀)</b><br>Sommet α en t₀, qui retombe à 0 en t₀ ± θ (voir triangle, n°7).</div>
+</div>
+
+<h2 id="deriv">Dérivation graphique</h2>
+<p>Objectif : tracer x′(t) en regardant seulement la courbe de x(t), sans calcul. Il suffit de lire deux choses : les <b>sauts</b> et les <b>pentes</b>.</p>
+<div class="grid">
+<div class="card"><h3>Étape 1 : repérer les sauts</h3>Un saut est une marche verticale sur la courbe. Chaque saut donne un <b>Dirac</b> à la même position t₀.</div>
+<div class="card"><h3>Étape 2 : poids du Dirac</h3><b>poids = valeur après − valeur avant</b>. Résultat positif : flèche vers le haut. Résultat négatif : flèche vers le bas.</div>
+<div class="card"><h3>Étape 3 : lire les pentes</h3>Entre deux sauts, x′(t) vaut la <b>pente</b> du segment : montée, descente ou 0 si le segment est horizontal.</div>
+</div>
+<div class="call k"><b>Vérification</b>Intégrer x′(t) doit redonner x(t) : un Dirac de poids w fait monter la courbe de w, un palier de hauteur p fait monter la courbe de p par unité de temps.</div>
+<div class="call w"><b>Piège</b>Un « coin » (changement de pente sans saut) ne donne <b>pas</b> de Dirac dans x′(t). La dérivée a simplement un palier qui change de valeur.</div>
+
+<h3>Exemples, du plus simple au plus complet</h3>
+<p>À gauche la courbe de départ x(t), à droite sa dérivée x′(t).</p>
+<div class="card ex"><b>A. Saut vers le haut</b> (de 1 à 3)
+<div class="pair"><figure class="fig"><div id="a1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="a2"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> en t₀ la courbe passe de 1 à 3, donc poids = 3 − 1 = <b>+2</b>. Un Dirac de poids 2, flèche vers le haut : x′(t) = 2δ(t − t₀). Partout ailleurs les paliers sont horizontaux, donc x′ = 0.</div>
+
+<div class="card ex"><b>B. Saut vers le bas</b> (de 3 à 1)
+<div class="pair"><figure class="fig"><div id="b1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="b2"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> poids = 1 − 3 = <b>−2</b>, donc flèche vers le <b>bas</b> : x′(t) = −2δ(t − t₀).</div>
+
+<div class="card ex"><b>C. Segment incliné, sans saut</b> (rampe qui s'arrête à 2)
+<div class="pair"><figure class="fig"><div id="c1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="c2"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> aucun saut, donc aucun Dirac. Entre 0 et 2 la courbe monte de 2 sur une durée de 2 : pente = 2 ÷ 2 = <b>1</b>, donc un palier à 1. Avant 0 et après 2 la courbe est plate : x′ = 0.</div>
+
+<div class="card ex"><b>D. Porte</b> (hauteur 1, de −1 à 1)
+<div class="pair"><figure class="fig"><div id="p1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="p2"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> deux sauts. En −1 la courbe monte de 0 à 1 : poids <b>+1</b>. En 1 elle redescend de 1 à 0 : poids <b>−1</b>. Donc x′(t) = δ(t + 1) − δ(t − 1).</div>
+
+<div class="card ex"><b>E. Triangle</b> (sommet 2, base de −1 à 1)
+<div class="pair"><figure class="fig"><div id="t1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="t2"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> aucun saut, donc aucun Dirac. Côté gauche : la courbe monte de 2 sur une durée de 1, pente <b>+2</b>. Côté droit : elle descend de 2 sur une durée de 1, pente <b>−2</b>. Ailleurs : 0. En général, pente = hauteur ÷ demi-base, soit <b>α/θ</b> avec les notations du cours (base 2θ), ou 2α/θ si θ désigne la base entière.</div>
+
+<div class="card ex"><b>F. Pente puis chute</b> (cas qui mélange les deux règles)
+<div class="pair"><figure class="fig"><div id="m5"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="m6"></div><figcaption>x′(t)</figcaption></figure></div>
+<b>Lecture :</b> de 0 à 2 la courbe monte de 0 à 2 : palier de pente <b>1</b>. En t = 2 elle tombe de 2 à 0 : Dirac de poids <b>−2</b>. Donc x′(t) = 1 sur ]0 ; 2[ et −2δ(t − 2).</div>
+
+<div class="call"><b>Cas de l'échelon</b>αu(t − t₀) saute de 0 à α : poids α − 0 = α, donc sa dérivée est αδ(t − t₀). C'est l'exemple A avec 0 comme valeur de départ.</div>
+
+<h2 id="recap">6. Récapitulatif des relations</h2>
+<div class="tw"><table>
+<tr><th>Signal</th><th>Lien avec les autres</th></tr>
+<tr><td>Dirac → échelon</td><td>∫<sub>−∞</sub><sup>t</sup> δ(τ)dτ = u(t), donc u′ = δ</td></tr>
+<tr><td>Échelon → rampe</td><td>r(t) = t·u(t), donc r′ = u</td></tr>
+<tr><td>Signe ↔ échelon</td><td>Sgn(t) = 2u(t) − 1, donc Sgn′ = 2δ</td></tr>
+<tr><td>Dirac → peigne</td><td>p(t) = Σ δ(t − nT)</td></tr>
+</table></div>
+<div class="call k"><b>Chaîne de dérivation</b>rampe → (dérivée) → échelon → (dérivée) → Dirac. Dans l'autre sens, on intègre.</div>
+
+<h2 id="quiz">7. Quiz d'auto-test</h2>
+<p>Réponds dans ta tête, puis ouvre.</p>
+<details><summary>Quelle est la différence entre signal et information ?</summary><p>L'information est le message à transmettre ; le signal en est la représentation physique.</p></details>
+<details><summary>Un signal quantifié est-il à temps discret ou à amplitude discrète ?</summary><p>À amplitude discrète (le temps reste continu). L'échantillonné est à temps discret.</p></details>
+<details><summary>Un signal périodique est-il à énergie finie ?</summary><p>Non : il est à puissance moyenne finie non nulle, donc à énergie infinie.</p></details>
+<details><summary>Un signal à énergie finie a quelle puissance moyenne ?</summary><p>Nulle.</p></details>
+<details><summary>Que vaut x(t)δ(t − t₀) ?</summary><p>x(t₀)δ(t − t₀).</p></details>
+<details><summary>Exprime la rampe avec l'échelon.</summary><p>r(t) = t·u(t).</p></details>
+<details><summary>Que vaut 1 + Sgn(t) ?</summary><p>2u(t).</p></details>
+<details><summary>Où se trouve le sommet de αΛ(t − t₀), et quelle est la largeur de la base ?</summary><p>Sommet de hauteur α en t = t₀ ; base de t₀ − θ à t₀ + θ, donc de largeur 2θ.</p></details>
+<details><summary>Quelle est la période de A cos(ω₀t + φ) ?</summary><p>T₀ = 2π/ω₀.</p></details>
+<details><summary>Que fait x(−t) à la courbe de x(t) ?</summary><p>Une symétrie par rapport à l'axe des ordonnées.</p></details>
+<details><summary>Quelle est la dérivée d'un saut de α à β en t₀ ?</summary><p>(β − α)·δ(t − t₀) : flèche vers le haut si β &gt; α, vers le bas sinon.</p></details>
+</main>
+<footer>Source : Chapitre I – Notions de base sur les signaux, N. Soudani.</footer>
+
+<script>
+(function(){
+var W=300,H=170,P=16;
+function plot(id,f,o){
+ o=Object.assign({x0:-4,x1:4,y0:-1.4,y1:1.4,n:500,t:[]},o);
+ var X=function(x){return P+(x-o.x0)/(o.x1-o.x0)*(W-2*P)},Y=function(y){return H-P-(y-o.y0)/(o.y1-o.y0)*(H-2*P)};
+ var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(o.al||'courbe')+'">';
+ s+='<line x1="'+X(o.x0)+'" x2="'+X(o.x1)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="var(--mute)"/><line x1="'+X(0)+'" x2="'+X(0)+'" y1="'+Y(o.y0)+'" y2="'+Y(o.y1)+'" stroke="var(--mute)"/>';
+ s+='<text x="'+(W-8)+'" y="'+(Y(0)-5)+'" fill="var(--mute)" font-size="11" text-anchor="end">t</text>';
+ (o.ghost?[o.ghost]:[]).forEach(function(g){s+=path(g,'var(--sig)',.35,'4 3')});
+ function path(fn,c,op,da){var d='',up=false;for(var i=0;i<=o.n;i++){var x=o.x0+(o.x1-o.x0)*i/o.n,y=fn(x);if(o.q)y=Math.round(y/o.q)*o.q;d+=(i&&up?'L':'M')+X(x).toFixed(1)+' '+Y(y).toFixed(1);up=true}return '<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="2.2" opacity="'+(op||1)+'"'+(da?' stroke-dasharray="'+da+'"':'')+'/>'}
+ if(o.samp){for(var x=o.x0+o.samp;x<o.x1;x+=o.samp){var y=f(x);if(o.q)y=Math.round(y/o.q)*o.q;s+='<line x1="'+X(x)+'" x2="'+X(x)+'" y1="'+Y(0)+'" y2="'+Y(y)+'" stroke="var(--accent)" stroke-width="2"/><circle cx="'+X(x)+'" cy="'+Y(y)+'" r="2.6" fill="var(--accent)"/>'}}
+ else if(f){s+=path(f,o.c||'var(--accent)')}
+ if(o.stems){o.stems.forEach(function(a){var x=X(a[0]),y=Y(a[1]);var d=a[1]<0?-1:1;s+='<line x1="'+x+'" x2="'+x+'" y1="'+Y(0)+'" y2="'+(y+6*d)+'" stroke="var(--accent)" stroke-width="2.4"/><path d="M'+(x-5)+' '+(y+8*d)+' L'+x+' '+(y)+' L'+(x+5)+' '+(y+8*d)+'z" fill="var(--accent)"/>';if(a[2])s+='<text x="'+(x+7)+'" y="'+(y+(d>0?10:-2))+'" fill="var(--ink)" font-size="11">'+a[2]+'</text>'})}
+ if(o.extra)s+=o.extra(X,Y);
+ o.t.forEach(function(a){s+='<line x1="'+X(a[0])+'" x2="'+X(a[0])+'" y1="'+(Y(0)-3)+'" y2="'+(Y(0)+3)+'" stroke="var(--mute)"/><text x="'+X(a[0])+'" y="'+(Y(0)+15)+'" fill="var(--ink)" font-size="11" text-anchor="middle">'+a[1]+'</text>'});
+ document.getElementById(id).innerHTML=s+'</svg>';
+}
+var sin=Math.sin,PI=Math.PI,ex=Math.exp;
+var an=function(t){return sin(t*1.5)*ex(-Math.abs(t)/6)*1.3+.1*sin(t*5)*0};
+var M={x0:-4,x1:4,y0:-1.3,y1:1.3};
+var base=function(t){return sin(PI*t/2.5)*0.9};
+plot('m1',base,Object.assign({al:'signal analogique'},M));
+plot('m2',base,Object.assign({q:.45,n:700,al:'signal quantifié'},M));
+plot('m3',base,Object.assign({samp:.4,al:'signal échantillonné'},M));
+plot('m4',base,Object.assign({samp:.4,q:.45,al:'signal numérique'},M));
+var g=function(t){return t>=0?t*ex(1-t):0};
+var O={x0:-3,x1:6,y0:-.5,y1:2.6,n:600};
+plot('o1',function(t){return g(t-2)},Object.assign({ghost:g,t:[[0,'0'],[2,'t₀']],al:'décalage horizontal'},O));
+plot('o2',function(t){return g(t)+1},Object.assign({ghost:g,al:'décalage vertical',extra:function(X,Y){return '<text x="'+(X(4.6))+'" y="'+(Y(1)-4)+'" fill="var(--ink)" font-size="11">a</text>'}},O));
+plot('o3',function(t){return g(-t)},Object.assign({ghost:g,al:'transposition'},{x0:-6,x1:6,y0:-.5,y1:2.6,n:600}));
+plot('o4',function(t){return g(2*t)},Object.assign({ghost:g,al:'changement d’échelle'},O));
+var S={x0:-4,x1:4};
+var door=function(t){return Math.abs(t-0.5)<1.25?1:0};
+plot('s1',door,{x0:-4,x1:5,y0:-.4,y1:1.5,n:900,t:[[0.5,'t₀'],[-0.75,'t₀−θ/2'],[1.75,'t₀+θ/2']],al:'porte',extra:function(X,Y){return '<text x="'+(X(0)+4)+'" y="'+(Y(1)+4)+'" fill="var(--ink)" font-size="11">α</text>'}});
+plot('s2',null,{x0:-4,x1:4,y0:-.4,y1:1.5,stems:[[1,1,'α']],t:[[1,'t₀']],al:'Dirac',f:null});
+(function(){var st=[];for(var k=-3;k<=3;k++)st.push([k*1.2,1]);plot('s3',null,{x0:-4.5,x1:4.5,y0:-.4,y1:1.5,stems:st,t:[[0,'0'],[1.2,'T'],[2.4,'2T']],al:'peigne de Dirac'})})();
+plot('s4',function(t){return t>1?1:0},{x0:-3,x1:5,y0:-.4,y1:1.5,n:900,t:[[1,'t₀']],al:'échelon',extra:function(X,Y){return '<text x="'+(X(0)+4)+'" y="'+(Y(1)+4)+'" fill="var(--ink)" font-size="11">α</text>'}});
+plot('s5',function(t){return t>0?1:-1},{x0:-4,x1:4,y0:-1.5,y1:1.5,n:900,al:'signe',extra:function(X,Y){return '<text x="'+(X(0)+4)+'" y="'+(Y(1)+4)+'" fill="var(--ink)" font-size="11">1</text><text x="'+(X(0)+4)+'" y="'+(Y(-1)+12)+'" fill="var(--ink)" font-size="11">−1</text>'}});
+plot('s6',function(t){return t>=0?t:0},{x0:-3,x1:4,y0:-.6,y1:4,al:'rampe'});
+plot('s7',function(t){var u=Math.abs(t-1);return u<=1.5?1-u/1.5:0},{x0:-3,x1:5,y0:-.4,y1:1.5,t:[[-.5,'t₀−θ'],[1,'t₀'],[2.5,'t₀+θ']],al:'triangle',extra:function(X,Y){return '<text x="'+(X(1)+6)+'" y="'+(Y(1)+4)+'" fill="var(--ink)" font-size="11">α</text>'}});
+plot('s8',function(t){return ex(.7*t)},{x0:-3,x1:3,y0:-.4,y1:4,al:'exponentiel a>0',c:'var(--sig)',n:400,extra:function(X,Y){var d='';for(var i=0;i<=300;i++){var x=-3+6*i/300;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(ex(-.7*x)).toFixed(1)}return '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2.2"/><text x="'+(X(0)+5)+'" y="'+(Y(1)-4)+'" fill="var(--ink)" font-size="11">C</text>'}});
+plot('s9',function(t){return Math.cos(2*PI*t/2+.6)},{x0:-3,x1:3.5,y0:-1.4,y1:1.5,t:[[1.0,'T₀=2π/ω₀']],al:'sinusoïde',extra:function(X,Y){return '<text x="'+(X(0)-6)+'" y="'+(Y(Math.cos(.6))-4)+'" text-anchor="end" fill="var(--ink)" font-size="11">A cos φ</text><text x="'+(X(0)-6)+'" y="'+(Y(1)+4)+'" text-anchor="end" fill="var(--ink)" font-size="11">A</text>'}});
+plot('s10',function(t){return t===0?1:sin(2*PI*t)/(2*PI*t)},{x0:-5,x1:5,y0:-.4,y1:1.15,n:1001,t:[[0.5,'1/2a'],[1,'1/a']],al:'sinus cardinal'});
+
+var D={x0:-3,x1:4,y0:-.8,y1:3.6,n:900},Dd={x0:-3,x1:4,y0:-2.8,y1:2.8,n:900};
+var lab=function(a){return function(X,Y){return a.map(function(q){return '<text x="'+(X(q[0])+5)+'" y="'+Y(q[1])+'" fill="var(--ink)" font-size="11">'+q[2]+'</text>'}).join('')}};
+plot('a1',function(t){return t<1?1:3},Object.assign({t:[[1,'t₀']],al:'saut vers le haut',extra:lab([[0,1.25,'1'],[1.2,3.25,'3']])},D));
+plot('a2',null,Object.assign({stems:[[1,2,'+2']],t:[[1,'t₀']],al:'dérivée : Dirac +2'},Dd));
+plot('b1',function(t){return t<1?3:1},Object.assign({t:[[1,'t₀']],al:'saut vers le bas',extra:lab([[-2.5,3.25,'3'],[1.2,1.3,'1']])},D));
+plot('b2',null,Object.assign({stems:[[1,-2,'−2']],t:[[1,'t₀']],al:'dérivée : Dirac −2'},Dd));
+plot('c1',function(t){return t<=0?0:(t<2?t:2)},Object.assign({t:[[2,'2']],al:'rampe qui s’arrête'},D));
+plot('c2',function(t){return t>0&&t<2?1:0},Object.assign({t:[[2,'2']],al:'palier à 1',extra:lab([[2.2,1,'1']])},Dd));
+plot('p1',function(t){return Math.abs(t)<1?1:0},Object.assign({t:[[-1,'−1'],[1,'1']],al:'porte'},D));
+plot('p2',null,Object.assign({stems:[[-1,1,'+1'],[1,-1,'−1']],t:[[-1,'−1'],[1,'1']],al:'dérivée de la porte'},Dd));
+plot('t1',function(t){return Math.abs(t)<1?2*(1-Math.abs(t)):0},Object.assign({t:[[-1,'−1'],[1,'1']],al:'triangle',extra:lab([[0,2.25,'2']])},D));
+plot('t2',function(t){return t>-1&&t<0?2:(t>0&&t<1?-2:0)},Object.assign({t:[[-1,'−1'],[1,'1']],al:'dérivée du triangle',extra:lab([[-1,2.3,'+2'],[0.1,-2.3,'−2']])},Dd));
+plot('m5',function(t){return t>0&&t<2?t:0},Object.assign({t:[[2,'2']],al:'pente puis chute'},D));
+plot('m6',function(t){return t>0&&t<2?1:0},Object.assign({stems:[[2,-2,'−2']],extra:lab([[0.8,1.2,'1']]),t:[[2,'2']],al:'dérivée : palier 1 et Dirac −2'},Dd));
+var b=document.getElementById('th'),r=document.documentElement;
+b.onclick=function(){var d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'};
+})();
+</script>
+</body>
+</html>
