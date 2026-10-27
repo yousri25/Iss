@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Révision – Notions de base sur les signaux</title>
+<title>Révision ISS – Chapitres I et II</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
 <style>
 :root{--bg:#f3f5f8;--card:#fff;--ink:#1f2a37;--mute:#5b6878;--line:#d9e0e8;--accent:#3f6c9a;--soft:#e4edf6;--warn:#b4531d;--warnbg:#fbeee4;--ok:#2d7a52;--okbg:#e5f4ec;--sig:#c2410c;
@@ -52,7 +52,7 @@ footer{max-width:940px;margin:50px auto;padding:0 18px;color:var(--mute);font-si
 </head>
 <body>
 <nav>
-<a href="#gen">Généralités</a><a href="#class">Classification</a><a href="#ener">Énergie &amp; puissance</a><a href="#ops">Opérations</a><a href="#usuels">Signaux usuels</a><a href="#deriv">Dérivation graphique</a><a href="#recap">Récap</a><a href="#quiz">Quiz</a>
+<a href="#gen">Généralités</a><a href="#class">Classification</a><a href="#ener">Énergie &amp; puissance</a><a href="#ops">Opérations</a><a href="#usuels">Signaux usuels</a><a href="#deriv">Dérivation graphique</a><a href="#recap">Récap</a><a href="#quiz">Quiz</a><span style="color:var(--line)">|</span><a href="#ch2">Chapitre II</a><a href="#tf">TF</a><a href="#prop">Propriétés</a><a href="#tfu">TF usuelles</a><a href="#tfd">Par dérivation</a><a href="#quiz2">Quiz II</a>
 <button id="th" type="button">Thème</button>
 </nav>
 
@@ -227,8 +227,93 @@ footer{max-width:940px;margin:50px auto;padding:0 18px;color:var(--mute);font-si
 <details><summary>Quelle est la période de A cos(ω₀t + φ) ?</summary><p>T₀ = 2π/ω₀.</p></details>
 <details><summary>Que fait x(−t) à la courbe de x(t) ?</summary><p>Une symétrie par rapport à l'axe des ordonnées.</p></details>
 <details><summary>Quelle est la dérivée d'un saut de α à β en t₀ ?</summary><p>(β − α)·δ(t − t₀) : flèche vers le haut si β &gt; α, vers le bas sinon.</p></details>
+
+<h1 id="ch2" style="margin:80px 0 10px">Chapitre II : Analyse de Fourier</h1>
+<p class="lead">Passer du domaine temporel au domaine fréquentiel : définition de la transformée de Fourier (TF), propriétés, TF des signaux usuels et calcul par dérivation. Même principe qu'au chapitre I : une formule, un schéma.</p>
+
+<h2 id="tf">1. Transformée de Fourier</h2>
+<div class="grid">
+<div class="card"><h3>TF directe</h3>domaine temporel → domaine fréquentiel<div class="f">X(f) = ∫−∞+∞ x(t) e−j2πft dt = TF[x(t)]</div></div>
+<div class="card"><h3>TF inverse</h3>domaine fréquentiel → domaine temporel<div class="f">x(t) = ∫−∞+∞ X(f) e+j2πft df = TF⁻¹[X(f)]</div></div>
+</div>
+<div class="call w"><b>Piège</b>Le signe de l'exponentielle change : <b>e<sup>−j2πft</sup></b> pour la TF, <b>e<sup>+j2πft</sup></b> pour l'inverse. Notation : x(t) en minuscule, sa TF X(f) en majuscule.</div>
+
+<h2 id="prop">2. Propriétés</h2>
+<div class="tw"><table>
+<tr><th>Propriété</th><th>Formule</th><th>À retenir</th></tr>
+<tr><td>Linéarité</td><td>TF[a·x(t) + b·y(t)] = aX(f) + bY(f)</td><td>La TF d'une somme est la somme des TF.</td></tr>
+<tr><td>Valeur à l'origine</td><td>X(0) = ∫ x(t) dt &nbsp;et&nbsp; x(0) = ∫ X(f) df</td><td>X(0) = <b>aire</b> sous x(t).</td></tr>
+<tr><td>Réciprocité</td><td>si TF[x(t)] = X(f) alors TF[X(t)] = x(−f)</td><td>On échange les rôles, avec un « − » sur f.</td></tr>
+<tr><td>Changement d'échelle</td><td>TF[x(at)] = (1/|a|) · X(f/a)</td><td>Comprimé en temps = étalé en fréquence.</td></tr>
+</table></div>
+<p>Deux propriétés de plus servent dans les exercices :</p>
+<div class="grid">
+<div class="card"><h3>Décalage temporel</h3><div class="f">TF[x(t − t₀)] = X(f) e−j2πft₀</div></div>
+<div class="card"><h3>Dérivation</h3><div class="f">TF[dx/dt] = j2πf · X(f)</div></div>
+</div>
+<div class="call"><b>Réciprocité en image</b>Si x(t) est une porte, X(f) est un sinus cardinal. Alors la TF d'un sinus cardinal (en t) est une porte (en f). La courbe se « retourne » : on obtient x(−f).</div>
+<div class="call k"><b>Vérification rapide</b>X(0) = aire de x(t). Porte de hauteur 1 et largeur 2a : X(0) = 2a. Triangle de hauteur 1 et base 2a : X(0) = a.</div>
+
+<h2 id="tfu">3. TF des signaux usuels</h2>
+<div class="tw"><table>
+<tr><th>x(t)</th><th>X(f)</th></tr>
+<tr><td>δ(t)</td><td>1</td></tr>
+<tr><td>δ(t − t₀)</td><td>e−j2πft₀</td></tr>
+<tr><td>ej2πf₀t</td><td>δ(f − f₀)</td></tr>
+<tr><td>cos(2πf₀t)</td><td>½ [δ(f − f₀) + δ(f + f₀)]</td></tr>
+<tr><td>sin(2πf₀t)</td><td>(1/2j) [δ(f − f₀) − δ(f + f₀)]</td></tr>
+<tr><td>k (constante)</td><td>k·δ(f)</td></tr>
+<tr><td>Π₂ₐ(t) (porte, hauteur 1)</td><td>2a·sinc(2πfa)</td></tr>
+<tr><td>Λ (triangle, hauteur 1, base 2a)</td><td>a·sinc²(πfa)</td></tr>
+</table></div>
+<p>Ici sinc(u) = sin(u)/u, comme au chapitre I.</p>
+
+<h3>Démonstrations</h3>
+<div class="card"><b>TF[δ(t)] = 1.</b> Comme x(t)δ(t) = x(0)δ(t) (chapitre I), l'intégrale ∫ δ(t) e−j2πft dt vaut e⁰ · ∫ δ(t) dt = 1 · 1 = <b>1</b>.</div>
+<div class="card"><b>TF[ej2πf₀t] = δ(f − f₀).</b> On part de TF[δ(t − t₀)] = e−j2πft₀ et on applique la réciprocité : TF[e−j2πt₀t] = δ(f + t₀). On pose f₀ = −t₀ et on obtient le résultat.</div>
+<div class="card"><b>cos et sin.</b> Avec cos = (ej2πf₀t + e−j2πf₀t)/2 et sin = (ej2πf₀t − e−j2πf₀t)/2j, la linéarité donne les deux lignes du tableau. Pour la constante : k = k·ej2π·0·t, donc TF[k] = kδ(f).</div>
+<div class="pair"><figure class="fig"><div id="d1"></div><figcaption>δ(t)</figcaption></figure><figure class="fig"><div id="d2"></div><figcaption>X(f) = 1 : toutes les fréquences</figcaption></figure></div>
+<div class="pair"><figure class="fig"><div id="w1"></div><figcaption>cos(2πf₀t), ici f₀ = 1</figcaption></figure><figure class="fig"><div id="w2"></div><figcaption>X(f) : deux Diracs de poids ½ en ±f₀</figcaption></figure></div>
+<div class="call k"><b>Dualité</b>δ en temps donne 1 en fréquence, et 1 en temps donne δ en fréquence. C'est la réciprocité.</div>
+
+<h2 id="tfd">4. Calcul par dérivation : porte et triangle</h2>
+<p>Méthode : <b>dériver</b> x(t) jusqu'à n'obtenir que des Diracs (voir la dérivation graphique du chapitre I), prendre la TF, puis diviser par (j2πf) autant de fois qu'on a dérivé.</p>
+
+<h3>Porte Π₂ₐ(t) (hauteur 1, de −a à a)</h3>
+<div class="card ex">
+<div class="pair"><figure class="fig"><div id="z1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="z2"></div><figcaption>dx/dt = δ(t + a) − δ(t − a)</figcaption></figure></div>
+<b>1.</b> Deux sauts : +1 en −a, −1 en +a, donc dx/dt = δ(t + a) − δ(t − a).<br>
+<b>2.</b> TF : j2πf · X(f) = ej2πfa − e−j2πfa = 2j·sin(2πfa).<br>
+<b>3.</b> On divise par j2πf :
+<div class="f">X(f) = 2a · sin(2πfa)/(2πfa) = 2a·sinc(2πfa)</div>
+<div class="pair"><figure class="fig"><div id="z3"></div><figcaption>X(f) : pic 2a en 0, zéros en k/(2a)</figcaption></figure></div>
+</div>
+
+<h3>Triangle (hauteur 1, de −a à a)</h3>
+<div class="card ex">
+<div class="pair"><figure class="fig"><div id="y1"></div><figcaption>x(t)</figcaption></figure><figure class="fig"><div id="y2"></div><figcaption>d²x/dt² (dérivée seconde)</figcaption></figure></div>
+<b>1.</b> Pentes ±1/a, donc la dérivée première est un palier. Ses sauts donnent, à la dérivée seconde : d²x/dt² = (1/a)[δ(t + a) − 2δ(t) + δ(t − a)].<br>
+<b>2.</b> TF : (j2πf)² · X(f) = (1/a)[ej2πfa − 2 + e−j2πfa] = (1/a)(ejπfa − e−jπfa)² = (1/a)(2j)² sin²(πfa).<br>
+<b>3.</b> Avec (j2πf)² = −4π²f² :
+<div class="f">X(f) = a · sin²(πfa)/(πfa)² = a·sinc²(πfa)</div>
+<div class="pair"><figure class="fig"><div id="y3"></div><figcaption>X(f) : pic a en 0, zéros en k/a</figcaption></figure></div>
+</div>
+<div class="call w"><b>Piège</b>Diviser par j2πf n'est pas permis en f = 0. On retrouve la valeur en 0 avec X(0) = aire : 2a pour la porte, a pour le triangle (et la limite du sinc vaut 1).</div>
+<div class="call"><b>Amplitude A</b>Par linéarité, TF[A·Π₂ₐ(t)] = 2aA·sinc(2πfa).</div>
+
+<h2 id="quiz2">5. Quiz d'auto-test : chapitre II</h2>
+<p>Réponds dans ta tête, puis ouvre.</p>
+<details><summary>Quelle est la formule de la TF ? Et celle de la TF inverse ?</summary><p>X(f) = ∫ x(t) e<sup>−j2πft</sup> dt ; x(t) = ∫ X(f) e<sup>+j2πft</sup> df.</p></details>
+<details><summary>Que vaut X(0) ?</summary><p>L'intégrale de x(t) sur tout l'axe : l'aire sous la courbe.</p></details>
+<details><summary>Si TF[x(t)] = X(f), que vaut TF[X(t)] ?</summary><p>x(−f) (réciprocité).</p></details>
+<details><summary>Que vaut TF[x(at)] ?</summary><p>(1/|a|) · X(f/a).</p></details>
+<details><summary>Que vaut TF[δ(t)] ? Et TF[k] ?</summary><p>TF[δ(t)] = 1 ; TF[k] = k·δ(f).</p></details>
+<details><summary>Que vaut TF[cos(2πf₀t)] ?</summary><p>½ [δ(f − f₀) + δ(f + f₀)].</p></details>
+<details><summary>Quelle est la TF d'une porte Π₂ₐ(t) de hauteur 1 ?</summary><p>2a·sinc(2πfa).</p></details>
+<details><summary>Quelle est la TF d'un triangle de hauteur 1 et de base 2a ?</summary><p>a·sinc²(πfa).</p></details>
+<details><summary>Comment calculer la TF d'un triangle sans intégrer ?</summary><p>On dérive deux fois pour obtenir trois Diracs, on prend la TF avec (j2πf)², puis on divise.</p></details>
 </main>
-<footer>Source : Chapitre I – Notions de base sur les signaux, N. Soudani.</footer>
+<footer>Source : Chapitre I – Notions de base sur les signaux ; Chapitre II – Analyse de Fourier, N. Soudani.</footer>
 
 <script>
 (function(){
@@ -291,6 +376,39 @@ plot('m5',function(t){return t>0&&t<2?t:0},Object.assign({t:[[2,'2']],al:'pente 
 plot('m6',function(t){return t>0&&t<2?1:0},Object.assign({stems:[[2,-2,'−2']],extra:lab([[0.8,1.2,'1']]),t:[[2,'2']],al:'dérivée : palier 1 et Dirac −2'},Dd));
 var b=document.getElementById('th'),r=document.documentElement;
 b.onclick=function(){var d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'};
+})();
+</script>
+<script>
+(function(){
+var W=300,H=170,P=16;
+function plot(id,f,o){
+ o=Object.assign({x0:-4,x1:4,y0:-1.4,y1:1.4,n:500,t:[]},o);
+ var X=function(x){return P+(x-o.x0)/(o.x1-o.x0)*(W-2*P)},Y=function(y){return H-P-(y-o.y0)/(o.y1-o.y0)*(H-2*P)};
+ var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(o.al||'courbe')+'">';
+ s+='<line x1="'+X(o.x0)+'" x2="'+X(o.x1)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="var(--mute)"/><line x1="'+X(0)+'" x2="'+X(0)+'" y1="'+Y(o.y0)+'" y2="'+Y(o.y1)+'" stroke="var(--mute)"/>';
+ s+='<text x="'+(W-8)+'" y="'+(Y(0)-5)+'" fill="var(--mute)" font-size="11" text-anchor="end">'+(o.ax||'t')+'</text>';
+ (o.ghost?[o.ghost]:[]).forEach(function(g){s+=path(g,'var(--sig)',.35,'4 3')});
+ function path(fn,c,op,da){var d='',up=false;for(var i=0;i<=o.n;i++){var x=o.x0+(o.x1-o.x0)*i/o.n,y=fn(x);if(o.q)y=Math.round(y/o.q)*o.q;d+=(i&&up?'L':'M')+X(x).toFixed(1)+' '+Y(y).toFixed(1);up=true}return '<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="2.2" opacity="'+(op||1)+'"'+(da?' stroke-dasharray="'+da+'"':'')+'/>'}
+ if(o.samp){for(var x=o.x0+o.samp;x<o.x1;x+=o.samp){var y=f(x);if(o.q)y=Math.round(y/o.q)*o.q;s+='<line x1="'+X(x)+'" x2="'+X(x)+'" y1="'+Y(0)+'" y2="'+Y(y)+'" stroke="var(--accent)" stroke-width="2"/><circle cx="'+X(x)+'" cy="'+Y(y)+'" r="2.6" fill="var(--accent)"/>'}}
+ else if(f){s+=path(f,o.c||'var(--accent)')}
+ if(o.stems){o.stems.forEach(function(a){var x=X(a[0]),y=Y(a[1]);var d=a[1]<0?-1:1;s+='<line x1="'+x+'" x2="'+x+'" y1="'+Y(0)+'" y2="'+(y+6*d)+'" stroke="var(--accent)" stroke-width="2.4"/><path d="M'+(x-5)+' '+(y+8*d)+' L'+x+' '+(y)+' L'+(x+5)+' '+(y+8*d)+'z" fill="var(--accent)"/>';if(a[2])s+='<text x="'+(x+7)+'" y="'+(y+(d>0?10:-2))+'" fill="var(--ink)" font-size="11">'+a[2]+'</text>'})}
+ if(o.extra)s+=o.extra(X,Y);
+ o.t.forEach(function(a){s+='<line x1="'+X(a[0])+'" x2="'+X(a[0])+'" y1="'+(Y(0)-3)+'" y2="'+(Y(0)+3)+'" stroke="var(--mute)"/><text x="'+X(a[0])+'" y="'+(Y(0)+15)+'" fill="var(--ink)" font-size="11" text-anchor="middle">'+a[1]+'</text>'});
+ document.getElementById(id).innerHTML=s+'</svg>';
+}
+var sin=Math.sin,PI=Math.PI,sc=function(u){return u===0?1:sin(u)/u};
+var lab=function(a){return function(X,Y){return a.map(function(q){return '<text x="'+(X(q[0])+5)+'" y="'+Y(q[1])+'" fill="var(--ink)" font-size="11">'+q[2]+'</text>'}).join('')}};
+var ta=[[-1,'−a'],[1,'a']];
+plot('d1',null,{x0:-3,x1:3,y0:-.4,y1:1.5,stems:[[0,1,'1']],t:[[0,'0']],al:'Dirac'});
+plot('d2',function(){return 1},{x0:-3,x1:3,y0:-.4,y1:1.5,ax:'f',extra:lab([[0,1.2,'1']]),al:'constante 1'});
+plot('w1',function(t){return Math.cos(2*PI*t)},{x0:-2.2,x1:2.2,y0:-1.4,y1:1.5,t:[[1,'T₀']],al:'cosinus'});
+plot('w2',null,{x0:-2.5,x1:2.5,y0:-.3,y1:1.5,ax:'f',stems:[[-1,.5,'½'],[1,.5,'½']],t:[[-1,'−f₀'],[1,'f₀']],al:'deux Diracs'});
+plot('z1',function(t){return Math.abs(t)<1?1:0},{x0:-3,x1:3,y0:-.4,y1:1.5,n:900,t:ta,al:'porte',extra:lab([[0,1.15,'1']])});
+plot('z2',null,{x0:-3,x1:3,y0:-1.6,y1:1.6,stems:[[-1,1,'+1'],[1,-1,'−1']],t:ta,al:'dérivée de la porte'});
+plot('z3',function(f){return 2*sc(2*PI*f)},{x0:-3,x1:3,y0:-.8,y1:2.4,n:700,ax:'f',t:[[.5,'1/2a'],[1,'1/a']],al:'sinus cardinal',extra:lab([[0,2.2,'2a']])});
+plot('y1',function(t){return Math.abs(t)<1?1-Math.abs(t):0},{x0:-3,x1:3,y0:-.4,y1:1.5,n:900,t:ta,al:'triangle',extra:lab([[0,1.15,'1']])});
+plot('y2',null,{x0:-3,x1:3,y0:-2.8,y1:2,stems:[[-1,1,'1/a'],[0,-2,'−2/a'],[1,1,'1/a']],t:ta,al:'dérivée seconde du triangle'});
+plot('y3',function(f){var v=sc(PI*f);return v*v},{x0:-3,x1:3,y0:-.3,y1:1.3,n:700,ax:'f',t:[[1,'1/a'],[2,'2/a']],al:'sinus cardinal au carré',extra:lab([[0,1.1,'a']])});
 })();
 </script>
 </body>
