@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Révision ISS – Chapitres I et II</title>
+<title>Révision ISS – Chapitres I à IV</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
 <style>
 :root{--bg:#f3f5f8;--card:#fff;--ink:#1f2a37;--mute:#5b6878;--line:#d9e0e8;--accent:#3f6c9a;--soft:#e4edf6;--warn:#b4531d;--warnbg:#fbeee4;--ok:#2d7a52;--okbg:#e5f4ec;--sig:#c2410c;
@@ -52,7 +52,7 @@ footer{max-width:940px;margin:50px auto;padding:0 18px;color:var(--mute);font-si
 </head>
 <body>
 <nav>
-<a href="#gen">Généralités</a><a href="#class">Classification</a><a href="#ener">Énergie &amp; puissance</a><a href="#ops">Opérations</a><a href="#usuels">Signaux usuels</a><a href="#deriv">Dérivation graphique</a><a href="#recap">Récap</a><a href="#quiz">Quiz</a><span style="color:var(--line)">|</span><a href="#ch2">Chapitre II</a><a href="#tf">TF</a><a href="#prop">Propriétés</a><a href="#tfu">TF usuelles</a><a href="#tfd">Par dérivation</a><a href="#quiz2">Quiz II</a>
+<a href="#gen">Généralités</a><a href="#class">Classification</a><a href="#ener">Énergie &amp; puissance</a><a href="#ops">Opérations</a><a href="#usuels">Signaux usuels</a><a href="#deriv">Dérivation graphique</a><a href="#recap">Récap</a><a href="#quiz">Quiz</a><span style="color:var(--line)">|</span><a href="#ch2">Chapitre II</a><a href="#tf">TF</a><a href="#prop">Propriétés</a><a href="#tfu">TF usuelles</a><a href="#tfd">Par dérivation</a><a href="#quiz2">Quiz II</a><span style="color:var(--line)">|</span><a href="#ch3">Chapitre III</a><a href="#conv">Convolution</a><a href="#filt">Filtrage</a><a href="#corr">Corrélation</a><a href="#quiz3">Quiz III</a><span style="color:var(--line)">|</span><a href="#ch4">Chapitre IV</a><a href="#ech">Échantillonnage</a><a href="#shan">Shannon</a><a href="#recon">Reconstruction</a><a href="#num">Numérisation</a><a href="#quiz4">Quiz IV</a>
 <button id="th" type="button">Thème</button>
 </nav>
 
@@ -349,8 +349,130 @@ Donc x(t) = (4A/π) [ sin ω₀t + (1/3) sin 3ω₀t + (1/5) sin 5ω₀t + … ]
 <details><summary>Que valent TF[cos(2πf₀t)] et TF[sin(2πf₀t)] ?</summary><p>½[δ(f − f₀) + δ(f + f₀)] ; (1/2j)[δ(f − f₀) − δ(f + f₀)].</p></details>
 <details><summary>TF de la porte Π₂ₐ(t) et du triangle Λ₂ₐ(t) (hauteur 1) ?</summary><p>2a·sinc(2πfa) ; a·sinc²(πfa).</p></details>
 <details><summary>Comment obtenir la TF du triangle sans intégrer ?</summary><p>On dérive deux fois pour obtenir trois Diracs, on prend la TF avec (j2πf)², puis on divise.</p></details>
+
+<h1 id="ch3" style="margin:80px 0 10px">Chapitre III : Convolution &amp; Corrélation</h1>
+<p class="lead">Fiche de révision du cours de N. Soudani : produit de convolution et ses propriétés, exemples calculés pas à pas, filtrage, puis corrélation. Les courbes sont tracées à partir des résultats calculés.</p>
+
+<h2 id="conv">I. Produit de convolution</h2>
+<h3>Définition</h3>
+<div class="f">z(t) = x(t) ∗ y(t) = ∫<sub>−∞</sub><sup>+∞</sup> x(τ) · y(t − τ) dτ</div>
+<p>Le symbole ∗ désigne la convolution. Pour <b>chaque t</b>, on obtient un nombre z(t) : l'aire du produit de x(τ) par y(t − τ).</p>
+<div class="call"><b>Comment la calculer (méthode à 4 gestes)</b>1. <b>Retourner</b> y : y(τ) devient y(−τ). 2. <b>Décaler</b> de t : on obtient y(t − τ). 3. <b>Multiplier</b> par x(τ). 4. <b>Intégrer</b> (aire du produit). Quand t augmente, y(t − τ) glisse vers la droite. C'est la méthode des exemples plus bas.</div>
+
+<h3>Propriétés</h3>
+<div class="tw"><table><tr><th>Propriété</th><th>Formule</th></tr>
+<tr><td>Commutativité</td><td>x ∗ y = y ∗ x = ∫ y(τ) x(t − τ) dτ</td></tr>
+<tr><td>Convolution fréquentielle</td><td>X(f) ∗ Y(f) = ∫ X(F) Y(f − F) dF = Y(f) ∗ X(f)</td></tr>
+<tr><td>Dualité</td><td>TF[x ∗ y] = X(f) · Y(f) &nbsp;et&nbsp; TF[x · y] = X(f) ∗ Y(f)</td></tr>
+<tr><td>Dirac</td><td>x(t) ∗ δ(t − t₀) = x(t − t₀) &nbsp;et&nbsp; X(f) ∗ δ(f − f₀) = X(f − f₀)</td></tr></table></div>
+<div class="call k"><b>À retenir</b><b>Produit dans un domaine = convolution dans l'autre.</b> C'est pourquoi on filtre par un simple produit en fréquence, et pourquoi le chapitre IV fait apparaître des convolutions de spectres.</div>
+<div class="call"><b>Dirac = « copie »</b>Convoluer par δ(t − t₀) ne fait que <b>décaler</b> le signal de t₀. Convoluer par un <b>peigne</b> de Diracs recopie le signal à chaque nT : c'est exactement ce qui arrive au spectre lors de l'échantillonnage (chapitre IV).</div>
+
+<h3>Exemple 1 : deux portes</h3>
+<p>x(t) = αΠ<sub>2θ</sub>(t − θ) est une porte de hauteur α sur [0 ; 2θ]. y(t) = αΠ<sub>θ</sub>(t − θ/2) est une porte de hauteur α sur [0 ; θ]. Le produit x(τ)·y(t − τ) vaut α² là où les deux portes se <b>recouvrent</b>, donc z(t) = α² × (longueur du recouvrement). Schémas avec θ = 1 : x(τ) en trait plein, y(t − τ) en pointillé, recouvrement en bleu.</p>
+<div class="grid"><figure class="fig"><div id="k1"></div><figcaption>t = θ/2 : recouvrement = t</figcaption></figure><figure class="fig"><div id="k2"></div><figcaption>t = 3θ/2 : y(t − τ) est entièrement dans x</figcaption></figure><figure class="fig"><div id="k3"></div><figcaption>t = 5θ/2 : recouvrement = 3θ − t</figcaption></figure></div>
+<div class="tw"><table><tr><th>Intervalle</th><th>Recouvrement</th><th>z(t)</th></tr>
+<tr><td>t &lt; 0 ou t &gt; 3θ</td><td>aucun</td><td>0</td></tr>
+<tr><td>0 ≤ t ≤ θ</td><td>t</td><td>α²·t</td></tr>
+<tr><td>θ ≤ t ≤ 2θ</td><td>θ</td><td>α²θ</td></tr>
+<tr><td>2θ ≤ t ≤ 3θ</td><td>3θ − t</td><td>α²(3θ − t)</td></tr></table></div>
+<div class="pair"><figure class="fig"><div id="c1"></div><figcaption>z(t) : un trapèze (θ = 1, α = 1)</figcaption></figure><div class="call k"><b>Vérification</b>Largeur de z = largeur de x + largeur de y = 2θ + θ = 3θ. Hauteur du plateau = α²θ. L'aire de z vaut (aire de x) × (aire de y) = 2αθ × αθ = 2α²θ².</div></div>
+
+<h3>Exemple 2 : une porte et une rampe</h3>
+<p>x(t) = Π₂(t) vaut 1 sur [−1 ; 1]. y(t) = t/3 sur [0 ; 3], 0 ailleurs. Avec le changement de variable u = t − τ : z(t) = ∫<sub>t−1</sub><sup>t+1</sup> y(u) du, l'aire de y sous une fenêtre de largeur 2 qui glisse.</p>
+<div class="tw"><table><tr><th>Intervalle</th><th>Calcul</th><th>z(t)</th></tr>
+<tr><td>t &lt; −1 ou t &gt; 4</td><td>fenêtre hors de y</td><td>0</td></tr>
+<tr><td>−1 ≤ t ≤ 1</td><td>∫<sub>0</sub><sup>t+1</sup> u/3 du</td><td>(t + 1)²/6</td></tr>
+<tr><td>1 ≤ t ≤ 2</td><td>∫<sub>t−1</sub><sup>t+1</sup> u/3 du</td><td>2t/3</td></tr>
+<tr><td>2 ≤ t ≤ 4</td><td>∫<sub>t−1</sub><sup>3</sup> u/3 du</td><td>(9 − (t − 1)²)/6</td></tr></table></div>
+<div class="pair"><figure class="fig"><div id="c2"></div><figcaption>z(t) : maximum 4/3 en t = 2</figcaption></figure><div class="call k"><b>Vérification</b>Les morceaux se raccordent : en t = 1, 4/6 = 2/3 ; en t = 2, 4/3 des deux côtés. Aire de z = aire de x × aire de y = 2 × 3/2 = 3.</div></div>
+
+<h2 id="filt">II. Application : le filtrage</h2>
+<p>Filtrer, c'est supprimer les fréquences indésirables. Avec h(t) la <b>réponse impulsionnelle</b> du filtre :</p>
+<div class="f">y(t) = x(t) ∗ h(t) &nbsp;⟷ (TF) ⟷&nbsp; Y(f) = X(f) · H(f)</div>
+<p>H(f) est la <b>fonction de transfert</b> (en général complexe). Le graphe de |H(f)| donne le type du filtre : chaque filtre a une <b>fréquence de coupure</b> et donc une <b>bande passante</b>.</p>
+<div class="tw"><table><tr><th>Filtre</th><th>|H(f)| idéal</th><th>Il garde…</th></tr>
+<tr><td>Passe-bas</td><td>Av₀ pour f &lt; f<sub>c</sub>, 0 sinon</td><td>les basses fréquences</td></tr>
+<tr><td>Passe-haut</td><td>0 pour f &lt; f<sub>c</sub>, Av₀ sinon</td><td>les hautes fréquences</td></tr>
+<tr><td>Passe-bande</td><td>Av₀ entre f<sub>c1</sub> et f<sub>c2</sub>, 0 ailleurs</td><td>une bande</td></tr>
+<tr><td>Coupe-bande</td><td>0 entre f<sub>c1</sub> et f<sub>c2</sub>, Av₀ ailleurs</td><td>tout sauf une bande</td></tr></table></div>
+<div class="call"><b>Lien avec le chapitre II</b>Un passe-bas idéal est une <b>porte</b> en fréquence. Sa réponse impulsionnelle h(t) est donc un <b>sinus cardinal</b> (réciprocité de la TF).</div>
+
+<h2 id="corr">III. Fonction de corrélation</h2>
+<p>La corrélation mesure la <b>similitude</b> entre deux signaux. Entre x(t) et une version décalée de lui-même : <b>autocorrélation</b>. Entre x(t) et y(t) : <b>intercorrélation</b>.</p>
+<div class="grid"><div class="card"><h3>Intercorrélation</h3><div class="f">R<sub>xy</sub>(τ) = ∫ x(t) · y*(t − τ) dt</div></div>
+<div class="card"><h3>Autocorrélation</h3><div class="f">R<sub>x</sub>(τ) = ∫ x(t) · x*(t − τ) dt</div></div></div>
+<div class="call k"><b>À retenir</b>1. <b>R<sub>x</sub>(0) = E<sub>x</sub></b> : l'autocorrélation à l'origine est l'énergie du signal. 2. <b>R<sub>xy</sub>(τ) = x(τ) ∗ y*(−τ)</b> : la corrélation est une convolution avec le second signal <b>retourné</b> (et conjugué).</div>
+<div class="call w"><b>Piège</b>Dans la corrélation, on ne retourne pas avant de glisser : x(t) · y*(t − τ) est déjà « décalé de τ ». C'est la différence avec la convolution x(τ) · y(t − τ).</div>
+
+<h3>Exemple : autocorrélation d'une porte</h3>
+<p>x(t) = αΠ<sub>2θ</sub>(t − θ), porte de hauteur α sur [0 ; 2θ] (énergie E<sub>x</sub> = 2α²θ). R<sub>x</sub>(τ) = α² × (recouvrement de la porte avec elle-même décalée de τ) :</p>
+<div class="f">R<sub>x</sub>(τ) = α²(2θ − |τ|) si |τ| ≤ 2θ, 0 sinon</div>
+<div class="pair"><figure class="fig"><div id="r1"></div><figcaption>R<sub>x</sub>(τ) : un triangle (α = 1, θ = 1)</figcaption></figure><div class="call k"><b>Vérification</b>R<sub>x</sub>(0) = 2α²θ = E<sub>x</sub> ✓. R<sub>x</sub> est paire et son maximum est en 0 : un signal ressemble le plus à lui-même sans décalage.</div></div>
+
+<h2 id="quiz3">Quiz d'auto-test : chapitre III</h2>
+<p>Réponds dans ta tête, puis ouvre.</p>
+<details><summary>Donne la définition du produit de convolution.</summary><p>z(t) = ∫ x(τ) y(t − τ) dτ. Il est commutatif.</p></details>
+<details><summary>Que valent TF[x ∗ y] et TF[x · y] ?</summary><p>X(f)·Y(f) et X(f) ∗ Y(f).</p></details>
+<details><summary>Que vaut x(t) ∗ δ(t − t₀) ?</summary><p>x(t − t₀) : le signal est décalé de t₀.</p></details>
+<details><summary>Quelle est la forme de la convolution de deux portes ?</summary><p>Un trapèze (un triangle si les deux portes ont la même largeur). Sa largeur est la somme des largeurs.</p></details>
+<details><summary>Comment filtre-t-on un signal ?</summary><p>y(t) = x(t) ∗ h(t), soit Y(f) = X(f)·H(f), avec H(f) la fonction de transfert.</p></details>
+<details><summary>Cite les 4 types de filtres.</summary><p>Passe-bas, passe-haut, passe-bande, coupe-bande.</p></details>
+<details><summary>Que mesure la corrélation ? Distingue auto et inter.</summary><p>La similitude entre deux signaux. Autocorrélation : x avec lui-même décalé. Intercorrélation : x avec y.</p></details>
+<details><summary>Que vaut R<sub>x</sub>(0) ?</summary><p>L&#39;énergie E<sub>x</sub> du signal.</p></details>
+<details><summary>Quel lien entre corrélation et convolution ?</summary><p>R<sub>xy</sub>(τ) = x(τ) ∗ y*(−τ).</p></details>
+<details><summary>Quelle est l&#39;autocorrélation d&#39;une porte ?</summary><p>Un triangle de hauteur E<sub>x</sub> en τ = 0, de base 2 fois la largeur de la porte.</p></details>
+
+<h1 id="ch4" style="margin:80px 0 10px">Chapitre IV : Échantillonnage</h1>
+<p class="lead">Fiche de révision du cours de N. Soudani : l'opération d'échantillonnage vue en temps et en fréquence, le théorème de Shannon, la reconstruction par filtre passe-bas et les étapes de numérisation.</p>
+
+<h2 id="ech">1. Opération d'échantillonnage</h2>
+<p>On multiplie x(t) par un <b>peigne de Diracs</b> de période T (chapitre I, signal n°3). On ne garde que les valeurs de x aux instants nT.</p>
+<div class="f">x<sub>e</sub>(t) = x(t) · p<sub>T</sub>(t) &nbsp;avec&nbsp; p<sub>T</sub>(t) = Σ<sub>n</sub> δ(t − nT)</div>
+<div class="f">x<sub>e</sub>(t) = Σ<sub>n=−∞</sub><sup>+∞</sup> x(nT) · δ(t − nT)</div>
+<div class="pair"><figure class="fig"><div id="e0"></div><figcaption>x(t) en pointillé et ses échantillons x(nT)</figcaption></figure><div class="call"><b>Notations</b>T est la <b>période d'échantillonnage</b>. F<sub>e</sub> = 1/T est la <b>fréquence d'échantillonnage</b>.</div></div>
+<h3>Et en fréquence ?</h3>
+<p><b>Produit en temps → convolution en fréquence.</b> La TF du peigne est encore un peigne : TF[p<sub>T</sub>] = (1/T) Σ δ(f − n/T). Convoluer X(f) par un Dirac le décale (chapitre III), donc :</p>
+<div class="f">X<sub>e</sub>(f) = (1/T) Σ<sub>n=−∞</sub><sup>+∞</sup> X(f − n/T) = F<sub>e</sub> Σ<sub>n</sub> X(f − nF<sub>e</sub>)</div>
+<div class="call k"><b>À retenir</b>Le spectre du signal échantillonné est la <b>répétition périodique</b> du spectre du signal initial, avec la période F<sub>e</sub>.</div>
+
+<h2 id="shan">2. Recouvrement et théorème de Shannon</h2>
+<p>Exemple : X(f) est un triangle de bande F<sub>max</sub> = 1. Les répliques sont espacées de F<sub>e</sub>.</p>
+<div class="pair"><figure class="fig"><div id="e1"></div><figcaption>F<sub>e</sub> = 3 ≥ 2F<sub>max</sub> : pas de recouvrement</figcaption></figure><figure class="fig"><div id="e2"></div><figcaption>F<sub>e</sub> = 1,5 &lt; 2F<sub>max</sub> : recouvrement</figcaption></figure></div>
+<div class="tw"><table><tr><th>Condition</th><th>Conséquence</th></tr>
+<tr><td>F<sub>e</sub> &lt; 2F<sub>max</sub></td><td><b>Recouvrement</b> des répliques : le spectre est déformé, x(t) est perdu</td></tr>
+<tr><td>F<sub>e</sub> ≥ 2F<sub>max</sub></td><td><b>Pas de recouvrement</b> : x(t) se reconstitue parfaitement avec un filtre passe-bas</td></tr></table></div>
+<div class="call k"><b>Théorème de Shannon (ou de Nyquist)</b>Pour pouvoir reconstituer x(t) à partir de ses échantillons, il faut échantillonner à <b>F<sub>e</sub> ≥ 2F<sub>max</sub></b>, où F<sub>max</sub> est la plus haute fréquence du spectre de x(t).</div>
+
+<h2 id="recon">3. Reconstruction par filtre passe-bas</h2>
+<p>Sans recouvrement, la réplique centrée en 0 est intacte. Un filtre passe-bas idéal H(f), de gain T et de fréquence de coupure f<sub>c</sub>, l'isole :</p>
+<div class="f">F<sub>max</sub> &lt; f<sub>c</sub> &lt; F<sub>e</sub> − F<sub>max</sub> &nbsp;⟹&nbsp; X<sub>r</sub>(f) = X<sub>e</sub>(f) · H(f) = X(f)</div>
+<div class="pair"><figure class="fig"><div id="e3"></div><figcaption>X<sub>e</sub>(f) (F<sub>e</sub> = 3) et le filtre H(f) en pointillé (f<sub>c</sub> = 1,5)</figcaption></figure><div class="call"><b>Dans le cours</b>Chaîne : x(t) → ⊗ p(t) → x<sub>e</sub>(t) → H(jω) → x<sub>r</sub>(t). Le spectre de x<sub>r</sub> est identique à celui de x : x<sub>r</sub>(t) = x(t).</div></div>
+<div class="call"><b>Lien avec les chapitres II et III</b>H(f) est une porte, donc h(t) est un sinus cardinal. Et x<sub>r</sub> = x<sub>e</sub> ∗ h : chaque échantillon x(nT)δ(t − nT) est remplacé par x(nT)·h(t − nT) (convolution par un Dirac). La reconstruction est une somme de sinus cardinaux, un par échantillon.</div>
+<div class="call w"><b>Piège</b>Si F<sub>e</sub> &lt; 2F<sub>max</sub>, aucun filtre ne peut séparer les répliques qui se chevauchent : l'information est perdue.</div>
+
+<h2 id="num">4. Les étapes de numérisation d'un signal à temps continu</h2>
+<div class="tw"><table><tr><th>Étape</th><th>Ce qu'elle fait</th></tr>
+<tr><td><b>Échantillonnage</b></td><td>Signal continu dans le temps → signal discret (on discrétise le <b>temps</b>)</td></tr>
+<tr><td><b>Quantification</b></td><td>L'amplitude est représentée par un nombre fini de valeurs : les <b>niveaux de quantification</b> (on discrétise l'<b>amplitude</b>)</td></tr>
+<tr><td><b>Codage</b></td><td>Chaque niveau est codé par un mot binaire de k bits, soit <b>2<sup>k</sup> niveaux</b> possibles</td></tr></table></div>
+<div class="call w"><b>Erreur de quantification</b>C'est la différence entre le niveau réel de l'échantillon et le niveau de quantification correspondant.</div>
+<div class="call"><b>Lien avec le chapitre I</b>Analogique → (échantillonnage) → échantillonné → (quantification) → numérique. Ce sont les quatre types de signaux de la classification morphologique.</div>
+<div class="call"><b>Exemple (hors cours)</b>Avec k = 8 bits : 2⁸ = 256 niveaux. Un signal audio dont F<sub>max</sub> = 20 kHz demande F<sub>e</sub> ≥ 40 kHz.</div>
+
+<h2 id="quiz4">Quiz d'auto-test : chapitre IV</h2>
+<p>Réponds dans ta tête, puis ouvre.</p>
+<details><summary>Comment obtient-on x<sub>e</sub>(t) à partir de x(t) ?</summary><p>x<sub>e</sub>(t) = x(t)·p<sub>T</sub>(t) = Σ x(nT)δ(t − nT), avec p<sub>T</sub> un peigne de Diracs.</p></details>
+<details><summary>Que devient le spectre après échantillonnage ?</summary><p>Il est répété périodiquement, avec la période F<sub>e</sub> = 1/T : X<sub>e</sub>(f) = (1/T) Σ X(f − n/T).</p></details>
+<details><summary>Pourquoi une convolution en fréquence ?</summary><p>Parce que l&#39;échantillonnage est un produit en temps, et produit en temps = convolution en fréquence.</p></details>
+<details><summary>Énonce le théorème de Shannon.</summary><p>F<sub>e</sub> ≥ 2F<sub>max</sub> pour pouvoir reconstituer x(t) à partir de ses échantillons.</p></details>
+<details><summary>Que se passe-t-il si F<sub>e</sub> &lt; 2F<sub>max</sub> ?</summary><p>Les répliques du spectre se recouvrent : x(t) ne peut plus être reconstitué.</p></details>
+<details><summary>Comment reconstruit-on x(t) ?</summary><p>Avec un filtre passe-bas idéal de gain T et de coupure f<sub>c</sub> telle que F<sub>max</sub> &lt; f<sub>c</sub> &lt; F<sub>e</sub> − F<sub>max</sub>.</p></details>
+<details><summary>Quelles sont les 3 étapes de numérisation ?</summary><p>Échantillonnage (temps), quantification (amplitude), codage (mot binaire de k bits).</p></details>
+<details><summary>Combien de niveaux avec un codage sur k bits ?</summary><p>2<sup>k</sup> niveaux.</p></details>
+<details><summary>Qu&#39;est-ce que l&#39;erreur de quantification ?</summary><p>La différence entre le niveau réel de l&#39;échantillon et le niveau de quantification correspondant.</p></details>
 </main>
-<footer>Source : Chapitre I – Notions de base sur les signaux ; Chapitre II – Analyse de Fourier, N. Soudani.</footer>
+<footer>Source : Chapitre I – Notions de base sur les signaux ; Chapitre II – Analyse de Fourier ; Chapitre III – Convolution &amp; Corrélation ; Chapitre IV – Échantillonnage, N. Soudani.</footer>
 
 <script>
 (function(){
@@ -450,6 +572,19 @@ plot('z3',function(f){return 2*sc(2*PI*f)},{x0:-3,x1:3,y0:-.8,y1:2.4,n:700,ax:'f
 plot('y1',function(t){return Math.abs(t)<1?1-Math.abs(t):0},{x0:-3,x1:3,y0:-.4,y1:1.5,n:900,t:ta,al:'triangle',extra:lab([[0,1.15,'1']])});
 plot('y2',null,{x0:-3,x1:3,y0:-2.8,y1:2,stems:[[-1,1,'1/a'],[0,-2,'−2/a'],[1,1,'1/a']],t:ta,al:'dérivée seconde du triangle'});
 plot('y3',function(f){var v=sc(PI*f);return v*v},{x0:-3,x1:3,y0:-.3,y1:1.3,n:700,ax:'f',t:[[1,'1/a'],[2,'2/a']],al:'sinus cardinal au carré',extra:lab([[0,1.1,'a']])});
+
+var dr=function(a,b){return function(t){return t>=a&&t<=b?1:0}};
+var tri=function(u){return Math.max(0,1-Math.abs(u))};
+[[.5,'k1'],[1.5,'k2'],[2.5,'k3']].forEach(function(p){var t0=p[0];plot(p[1],dr(0,2),{x0:-1,x1:4,y0:-.4,y1:1.5,n:900,ax:'τ',ghost:dr(t0-1,t0),t:[[0,'0'],[2,'2θ']],al:'recouvrement',extra:function(X,Y){var a=Math.max(0,t0-1),b=Math.min(2,t0);return '<rect x="'+X(a)+'" y="'+Y(1)+'" width="'+(X(b)-X(a))+'" height="'+(Y(0)-Y(1))+'" fill="var(--accent)" opacity=".3"/>'}})});
+plot('c1',function(t){return t<0||t>3?0:t<1?t:t<2?1:3-t},{x0:-1,x1:4,y0:-.4,y1:1.5,n:900,t:[[1,'θ'],[2,'2θ'],[3,'3θ']],al:'trapèze',extra:lab([[1,1.15,'α²θ']])});
+plot('c2',function(t){return t<-1||t>4?0:t<1?(t+1)*(t+1)/6:t<2?2*t/3:(9-(t-1)*(t-1))/6},{x0:-2,x1:5,y0:-.3,y1:1.7,n:900,t:[[-1,'−1'],[1,'1'],[2,'2'],[4,'4']],al:'convolution porte et rampe',extra:lab([[2,1.4,'4/3']])});
+plot('r1',function(t){return Math.abs(t)<2?2-Math.abs(t):0},{x0:-3,x1:3,y0:-.4,y1:2.5,n:900,ax:'τ',t:[[-2,'−2θ'],[2,'2θ']],al:'autocorrélation',extra:lab([[0,2.25,'E']])});
+var bs=function(t){return Math.sin(Math.PI*t/2.5)*.9};
+plot('e0',bs,{x0:-4,x1:4,y0:-1.3,y1:1.3,ghost:bs,samp:.5,al:'échantillons'});
+var sp=function(Fe){return function(f){var s=0;for(var n=-6;n<=6;n++)s+=tri(f-n*Fe);return s}};
+plot('e1',sp(3),{x0:-5,x1:5,y0:-.3,y1:1.6,n:900,ax:'f',t:[[-1,'−Fmax'],[3,'Fe']],al:'sans recouvrement',extra:lab([[0,1.15,'1/T']])});
+plot('e2',sp(1.5),{x0:-5,x1:5,y0:-.3,y1:1.6,n:900,ax:'f',t:[[1.5,'Fe']],al:'avec recouvrement',extra:lab([[0,1.15,'1/T']])});
+plot('e3',sp(3),{x0:-5,x1:5,y0:-.3,y1:1.6,n:900,ax:'f',ghost:function(f){return Math.abs(f)<=1.5?1.3:0},t:[[-1.5,'−fc'],[1.5,'fc']],al:'filtre passe-bas',extra:lab([[-1.5,1.4,'T']])});
 })();
 </script>
 </body>
